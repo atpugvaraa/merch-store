@@ -4,11 +4,11 @@ Portal for distributing Creative Computing Society merch to society members.
 
 ## Tech Stack
 
-**Client**: NodeJS, ReactJS, Vite, Axios, TailwindCSS
+**Client**: NextJS, TypeScript, TailwindCSS
 
-**Server**: Python, Django-Rest-Framework
+**Server**: NextJS/NodeJS
 
-**Database**: PostgreSQL
+**Database**: PostgreSQL, Drizzle ORM
 
 ## Run Live Production
 
@@ -22,58 +22,27 @@ Visit [https://merch.ccstiet.com/](https://merch.ccstiet.com/) for using the web
 git clone https://github.com/creative-computing-society/merch-store.git
 ```
 
-### To start the frontend server
+### To run the project
 
 Go to project directory
-
 ```sh
-cd frontend
+cd merch-store
 ```
 
 Install the project dependencies
-
 ```sh
 npm i
 ```
 
-Run the start script
-
+Setup db using postgresql
 ```sh
-npm run dev
+./start-database.sh # have docker installed
+pnpm db:push
 ```
 
-### To start the backend server
-
-Go to the project directory
-
+Run the local server
 ```sh
-cd backend/config
-```
-
-We recommend you to use a virtual environment
-
-```sh
-python -m venv env
-```
-
-Activate virtual environment
-
-For Windows PowerShell:
-
-```sh
-env/Scripts/activate.ps1
-```
-
-For Linux and MacOS:
-
-```sh
-source env/bin/activate
-```
-
-Install dependencies
-
-```sh
-pip install -r requirements.txt
+pnpm dev
 ```
 
 Create a \`.env\` file in the project's root directory (base directory), and add \`DEBUG\`, \`ALLOWED_HOSTS\`, \`SECURITY_KEY\`, \`EMAIL_HOST_USER\`, and \`EMAIL_HOST_PASSWORD\`.
@@ -83,22 +52,6 @@ This project uses CCS Single Sign On (SSO) for user authentication. You would be
 You would also be required to add \`PHONEPE_MERCHANT_ID\` and \`PHONEPE_SALT_KEY\` for the utilisation of PhonePe Payment Gateway.
 
 At last, you would be required to add the database credentials in the \`.env\` file aswell, which includes the fields \`DATABASE_URL\`, \`POSTGRES_NAME\`,\`POSTGRES_USER\`, \`POSTGRES_PASSWORD\`, \`POSTGRES_HOST\`, and \`POSTGRES_PORT\`.
-
-Run Migrations
-
-```sh
-python manage.py makemigrations
-```
-
-```sh
-python manage.py migrate
-```
-
-Start the server
-
-```sh
-python manage.py runserver
-```
 
 ## Endpoints
 
@@ -153,4 +106,3 @@ python manage.py runserver
 
 -   [Akshat Bakshi - @akshat448](https://github.com/akshat448/)
 -   [Sakshham Bhagat - @SakshhamTheCoder](https://github.com/sakshhamthecoder/)
-
