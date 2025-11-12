@@ -2,30 +2,41 @@
   "name": "merch-store",
   "version": "1.0.0",
   "scripts": {
-    "dev": "nodemon backend/server.js & next dev frontend",
-    "lint": "eslint"
+    "dev": "nodemon --exec bun backend/server.ts & next dev frontend",
+    "lint": "eslint",
+    "prisma:generate": "dotenv -e .env -- npx prisma generate --schema ./db/prisma/schema.prisma",
+    "prisma:migrate": "dotenv -e .env -- npx prisma migrate dev --schema ./db/prisma/schema.prisma"
   },
   "type": "module",
   "dependencies": {
     "@arcjet/node": "^1.0.0-beta.13",
+    "@prisma/client": "^6.19.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
+    "next": "16.0.0",
     "nodemon": "^3.1.10",
     "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "next": "16.0.0"
+    "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@tailwindcss/postcss": "^4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.0.0"
+    "eslint-config-next": "16.0.0",
+    "prisma": "^6.19.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.6",
+    "typescript": "^5"
   }
 }
