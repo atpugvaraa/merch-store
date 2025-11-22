@@ -1,13 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import express from "express";
-import {addCartItems, deleteProductFromCart, updateCart, viewCartItems} from "../controllers/cartController";
+import { addCartItems, deleteProductFromCart, updateCart, viewCartItems } from "../controllers/cartController";
+import { requireAuth } from "../middlewares/auth";
 
 const router = express.Router();
 
-router.get("/", addCartItems)
-router.get("/", viewCartItems)
-router.post("/", deleteProductFromCart)
-router.post("/", updateCart)
+// All cart routes require authentication
+router.use(requireAuth);
+
+router.get("/", viewCartItems);
+router.post("/add", addCartItems);
+router.post("/delete", deleteProductFromCart);
+router.post("/update", updateCart);
 
 export default router;

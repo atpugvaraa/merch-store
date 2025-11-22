@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String  @id // Mapped from CharField(max_length=12, primary_key=True) - Roll No
+  email        String  @unique
+  phone_no     String?
+  name         String?
+  position     String  @default("user")
+  profile_pic  String?
+  is_member    Boolean @default(true)
+  is_active    Boolean @default(true)
+  is_admin     Boolean @default(false)
+  is_staff     Boolean @default(false)
+  is_superuser Boolean @default(false)
+
+  cart_items CartItem[]
+  orders     Order[]
+
+  @@map("users")
+}
+
+model DiscountCode {
+  id                  Int      @id @default(autoincrement())
+  code                String   @unique
+  discount_percentage Decimal  @db.Decimal(5, 2)
+  max_uses            Int
+  expiry_date         DateTime
+  for_user_positions  String[] // Mapped from ArrayField
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+  custom              Boolean  @default(false)
+  uses                Int      @default(0)
+
+  orders Order[]
+
+  @@map("discount_codes")
+}
+
+model Product {
+  id                 Int      @id @default(autoincrement())
+  name               String
+  price              Decimal  @default(0.00) @db.Decimal(10, 2)
+  max_quantity       Int      @default(1)
+  is_name_required   Boolean  @default(false)
+  is_size_required   Boolean  @default(false)
+  is_image_required  Boolean  @default(false)
+  accept_orders      Boolean  @default(true)
+  is_visible         Boolean  @default(true)
+  description        String?
+  for_user_positions String[] // Mapped from ArrayField
+  image1             String? // Store URL/Path
+  image2             String? // Store URL/Path
+  size_chart_image   String? // Store URL/Path
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+model CartItem {
+  id                  Int      @id @default(autoincrement())
+  user                User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id             String
+  product             Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id          Int
+  quantity            Int      @default(1)
+  total_amount        Decimal  @default(0.00) @db.Decimal(10, 2)
+  discount_percentage Decimal  @default(0.00) @db.Decimal(5, 2)
+  updated_amount      Decimal  @default(0.00) @db.Decimal(10, 2)
+  created_at          DateTime @default(now())
+
+  // Customization fields
+  printing_name String?
+  size          String?
+  image_url     String?
+
+  @@map("cart_items")
+}
+
+model Order {
+  id             String   @id // Custom ID e.g. "ccs_order_123456"
+  user           User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  user_id        String?
+  created_at     DateTime @default(now())
+  updated_amount Decimal  @db.Decimal(10, 2)
+  is_verified    Boolean  @default(false)
+  mail_added     Boolean  @default(false)
+
+  discount_code    DiscountCode? @relation(fields: [discount_code_id], references: [id], onDelete: SetNull)
+  discount_code_id Int?
+
+  total_amount Decimal @default(0) @db.Decimal(10, 2)
+  qr_code_data String? @db.Text
+  is_completed Boolean @default(false)
+
+  order_items OrderItem[]
+  payment     Payment?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  order      Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id   String
+  product    Product? @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id Int?
+
+  printing_name String?
+  size          String?
+  image_url     String?
+  quantity      Int     @default(1)
+
+  @@map("order_items")
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  order          Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id       String   @unique
+  transaction_id String   @unique
+  paid_amount    Decimal  @db.Decimal(10, 2)
+  status         String
+  payment_date   DateTime @default(now())
+  payment_id     String?  @unique
+  reason         String?
+
+  @@map("payments")
+}

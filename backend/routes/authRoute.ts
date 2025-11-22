@@ -1,12 +1,27 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import express from "express";
-import {login, logout, user} from "../controllers/authController";
+import passport from "passport";
+import { googleCallback, user, logout } from "../controllers/authController";
+import { requireAuth } from "../middlewares/auth"; // Assuming you have this
 
 const router = express.Router();
 
-router.post("/", login)
-router.get("/", logout)
-router.get("/", user)
+// Google OAuth - Init
+router.get(
+    "/google",
+    passport.authenticate("google", { scope: ["profile", "email"], session: false })
+);
+
+// Google OAuth - Callback
+router.get(
+    "/google/callback",
+    passport.authenticate("google", { failureRedirect: "/login", session: false }),
+    googleCallback
+);
+
+// Get Current User
+router.get("/me", requireAuth, user);
+
+// Logout
+router.post("/logout", logout);
 
 export default router;
